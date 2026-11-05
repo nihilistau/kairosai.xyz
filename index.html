@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kairos AI — local AI, built in the open</title>
+<meta name="description" content="Open-source local AI projects by Ray Daniels: Kairos, a companion framework that owns its memory; The Clockwork Dark, an emergent-story engine; and Primer, an offline illustrated primer.">
+<meta property="og:title" content="Kairos AI — local AI, built in the open">
+<meta property="og:description" content="Kairos, The Clockwork Dark and Primer: open-source local AI that runs on one consumer GPU.">
+<meta property="og:image" content="https://kairosai.xyz/assets/img/kairos-room-folders-dock.webp">
+<meta property="og:url" content="https://kairosai.xyz/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<style>
+  :root{
+    --bg:#0b0d10; --bg2:#11151a; --panel:#151a20; --line:#232a33;
+    --text:#e6e2d9; --muted:#9aa0a8; --dim:#6b727b;
+    --amber:#d9a84e; --teal:#45c8c0; --rose:#d98a8a;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Charter,Georgia,serif;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"Cascadia Code","SF Mono",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  img{max-width:100%;display:block}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* header */
+  header.top{position:sticky;top:0;z-index:20;background:rgba(11,13,16,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:600 18px/1 var(--serif);letter-spacing:.02em}
+  .brand svg{width:22px;height:22px}
+  nav a{color:var(--muted);text-decoration:none;font-size:14px;margin-left:22px}
+  nav a:hover{color:var(--text)}
+
+  /* hero */
+  .hero{padding:96px 0 72px;border-bottom:1px solid var(--line);background:
+    radial-gradient(800px 380px at 85% 0%,rgba(69,200,192,.10),transparent 70%),
+    radial-gradient(700px 360px at 0% 100%,rgba(217,168,78,.10),transparent 70%)}
+  .eyebrow{font:500 12px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+  h1{font:600 clamp(36px,5.4vw,60px)/1.08 var(--serif);margin:18px 0 20px;max-width:16ch}
+  .lede{font-size:clamp(17px,1.6vw,19px);color:var(--muted);max-width:60ch;margin:0}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .chip{font:13px/1 var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:9px 13px;background:var(--bg2)}
+
+  /* project index */
+  .index{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:56px 0 24px}
+  .card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#3a434e;transform:translateY(-2px)}
+  .card img{aspect-ratio:16/10;object-fit:cover;object-position:top;width:100%;border-bottom:1px solid var(--line)}
+  .card div{padding:16px 18px 20px}
+  .card h3{font:600 20px/1.2 var(--serif);margin:0 0 6px}
+  .card p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.5}
+
+  /* project sections */
+  section.project{padding:88px 0;border-top:1px solid var(--line)}
+  .phead{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:start}
+  .tag{display:inline-block;font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:7px 10px;border-radius:6px;border:1px solid}
+  .k .tag{color:var(--teal);border-color:rgba(69,200,192,.35)}
+  .c .tag{color:var(--amber);border-color:rgba(217,168,78,.35)}
+  .p .tag{color:var(--rose);border-color:rgba(217,138,138,.35)}
+  h2{font:600 clamp(30px,3.8vw,42px)/1.1 var(--serif);margin:16px 0 14px}
+  .tagline{font:italic 19px/1.5 var(--serif);color:var(--text);margin:0 0 18px}
+  .phead p{color:var(--muted);margin:0 0 14px}
+  ul.feat{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+  ul.feat li{padding-left:18px;position:relative;color:var(--muted)}
+  ul.feat li::before{content:"";position:absolute;left:0;top:.7em;width:7px;height:7px;border-radius:2px;background:var(--line)}
+  .k ul.feat li::before{background:var(--teal)} .c ul.feat li::before{background:var(--amber)} .p ul.feat li::before{background:var(--rose)}
+  ul.feat b{color:var(--text);font-weight:600}
+  .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:14px;text-decoration:none;padding:10px 14px;border-radius:9px;border:1px solid var(--line);background:var(--bg2)}
+  .btn:hover{border-color:#3a434e}
+  .btn svg{width:16px;height:16px;fill:currentColor}
+  .btn.primary{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px}
+  .gallery figure{margin:0}
+  .gallery figure:first-child{grid-column:1/-1}
+  .gallery img{border-radius:10px;border:1px solid var(--line);cursor:zoom-in;width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top}
+  .gallery figure:first-child img{aspect-ratio:auto}
+  .gallery figcaption{font-size:13px;color:var(--dim);margin-top:8px;line-height:1.45}
+
+  /* engine sub-panel */
+  .engine{margin-top:44px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 30px;display:grid;grid-template-columns:1fr 1.1fr;gap:36px}
+  .engine h3{font:600 22px/1.2 var(--serif);margin:0 0 10px}
+  .engine p{color:var(--muted);margin:0 0 12px;font-size:15px}
+  table{width:100%;border-collapse:collapse;font:13.5px/1.4 var(--mono)}
+  th,td{text-align:right;padding:9px 8px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left;color:var(--muted)}
+  th{color:var(--dim);font-weight:500}
+  td.win{color:var(--teal)}
+  .note{font-size:12.5px;color:var(--dim);margin-top:10px}
+
+  /* about / contact */
+  section.about{padding:88px 0;border-top:1px solid var(--line);background:var(--bg2)}
+  .about .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+  .about h2{margin-top:0}
+  .about p{color:var(--muted);margin:0 0 14px}
+  .contact{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px 28px;align-self:start}
+  .contact h3{font:600 20px/1.2 var(--serif);margin:0 0 14px}
+  .contact a.line{display:flex;justify-content:space-between;gap:16px;text-decoration:none;padding:13px 0;border-bottom:1px solid var(--line);font-size:15px}
+  .contact a.line:last-child{border-bottom:0}
+  .contact a.line span{color:var(--dim);font:13px/1.6 var(--mono)}
+  .contact a.line:hover{color:var(--amber)}
+
+  footer{padding:30px 0 40px;color:var(--dim);font-size:13px}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  /* lightbox */
+  #lb{position:fixed;inset:0;background:rgba(5,6,8,.92);display:none;align-items:center;justify-content:center;z-index:50;padding:4vh 4vw;cursor:zoom-out}
+  #lb.on{display:flex}
+  #lb img{max-height:88vh;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  #lb p{position:absolute;bottom:2vh;left:0;right:0;text-align:center;color:var(--muted);font-size:14px;padding:0 6vw}
+
+  @media (max-width:880px){
+    .index,.phead,.engine,.about .wrap{grid-template-columns:1fr}
+    .gallery{grid-template-columns:1fr 1fr}
+    nav a.hide-sm{display:none}
+    .hero{padding:64px 0 52px}
+    section.project{padding:64px 0}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#d9a84e" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>
+      Kairos AI
+    </a>
+    <nav>
+      <a href="#kairos" class="hide-sm">Kairos</a>
+      <a href="#clockwork" class="hide-sm">Clockwork Dark</a>
+      <a href="#primer" class="hide-sm">Primer</a>
+      <a href="#about">About</a>
+      <a href="https://github.com/nihilistau">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Open source · local-first · one consumer GPU</div>
+    <h1>Local AI, built in the open.</h1>
+    <p class="lede">Kairos AI is a small workshop of open-source projects that run on your own machine against your own models: a companion that keeps an auditable memory, a story engine where the dice are real, and a book that writes itself as you read it. Everything is MIT-licensed and on GitHub.</p>
+    <div class="chips">
+      <span class="chip">any OpenAI-compatible endpoint</span>
+      <span class="chip">LM Studio · llama.cpp · vLLM</span>
+      <span class="chip">built on an RTX 2060 12 GB</span>
+      <span class="chip">MIT licensed</span>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="index">
+    <a class="card" href="#kairos">
+      <img src="assets/img/kairos-room-folders-dock.webp" alt="The Kairos room: a desktop in the browser with app folders, a dock and her portrait" loading="lazy">
+      <div><h3>Kairos</h3><p>A local AI companion framework that owns its memory, plus a from-scratch CUDA engine to run it.</p></div>
+    </a>
+    <a class="card" href="#clockwork">
+      <img src="assets/img/clockwork-clockwork-dark-play.webp" alt="The Clockwork Dark in play" loading="lazy">
+      <div><h3>The Clockwork Dark</h3><p>An emergent-story engine: a deterministic world holds the truth, a local model narrates it.</p></div>
+    </a>
+    <a class="card" href="#primer">
+      <img src="assets/img/primer-reader-and-image.webp" alt="Primer's reader window beside a generated picture of a castle keep" loading="lazy">
+      <div><h3>Primer</h3><p>An offline illustrated primer: click any phrase to branch, draw or animate it.</p></div>
+    </a>
+  </div>
+</div>
+
+<!-- KAIROS -->
+<section class="project k" id="kairos">
+  <div class="wrap">
+    <div class="phead">
+      <div>
+        <span class="tag">Companion framework</span>
+        <h2>Kairos</h2>
+        <p class="tagline">Nothing she knows is ever deleted.</p>
+        <p>Kairos is a Python harness and a React "room" for a companion that remembers the person she talks to, speaks when she has a reason to, and spends time on her own while you are away. It runs against any OpenAI-compatible chat endpoint on one consumer GPU. No weights ship with it, and her personality starts blank; it's shaped by whoever she talks to.</p>
+        <div class="links">
+          <a class="btn primary" href="https://github.com/nihilistau/Kairos"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>nihilistau/Kairos</a>
+          <a class="btn" href="https://github.com/nihilistau/kairos-engine">kairos-engine</a>
+        </div>
+      </div>
+      <ul class="feat">
+        <li><b>Memory you can audit.</b> One append-only fact registry. Changed facts are tombstoned with their provenance, never dropped, and anything she concluded has a <i>why</i> button showing what it was drawn from.</li>
+        <li><b>Her own time.</b> When the room goes quiet, an idle clock gives her reasons to act: continue a thread, check in, remind, think. Every impulse is metered and judged, and what she did is readable afterwards.</li>
+        <li><b>A face, clothes and a voice.</b> A catalog of looks, gestures and motion loops. Inline marks move real state mid-sentence: mood, voice, what she's wearing.</li>
+        <li><b>She looks things up.</b> Web search inside the turn, plus an optional slower research tier whose receipts you can read.</li>
+        <li><b>A desktop in the browser.</b> Folders, a dock, movable windows, and a top bar that says how she is, how her day is going and how the machine is.</li>
+      </ul>
+    </div>
+
+    <div class="gallery">
+      <figure><img src="assets/img/kairos-room-folders-dock.webp" alt="The Kairos room with app folders, portrait and dock" loading="lazy"><figcaption>The room: five folders of apps, the portrait, and a dock of favourites.</figcaption></figure>
+      <figure><img src="assets/img/kairos-room-models.webp" alt="The Models window" loading="lazy"><figcaption>Models: her mind, librarian, memory index, ears, voice and eyes, each with its own status.</figcaption></figure>
+      <figure><img src="assets/img/kairos-room-voice.webp" alt="The Voice window" loading="lazy"><figcaption>Voice settings, each knob marked live or restart-to-change.</figcaption></figure>
+      <figure><img src="assets/img/kairos-room-research-settings.webp" alt="The Research and Settings windows" loading="lazy"><figcaption>Research she did on her own, beside Settings.</figcaption></figure>
+    </div>
+
+    <div class="engine">
+      <div>
+        <span class="tag">Optional backend</span>
+        <h3 style="margin-top:14px">kairos-engine</h3>
+        <p>A from-scratch CUDA inference engine and Rust HTTP daemon, built and measured on one 12 GB card for Gemma-4-26B-A4B. The 13 GB Q4 model doesn't fit in VRAM, so the experts live in pinned host RAM with an LRU expert cache on the GPU.</p>
+        <p>It exposes things a generic endpoint can't, like the raw stop-versus-continue logit gap that lets her pick a cut-off sentence back up.</p>
+        <div class="links"><a class="btn" href="https://github.com/nihilistau/kairos-engine">Read the engine write-up →</a></div>
+      </div>
+      <div>
+        <table>
+          <tr><th>RTX 2060 12 GB, Gemma-4-26B-A4B Q4</th><th>kairos-engine</th><th>llama.cpp -ncmoe 8</th></tr>
+          <tr><td>prefill, 3,720 tokens</td><td class="win">304.2 tok/s</td><td>262.6 tok/s</td></tr>
+          <tr><td>decode at depth 3,720</td><td>16.2 tok/s</td><td class="win">38.3 tok/s</td></tr>
+        </table>
+        <p class="note">Same card, same weights, one sitting. Prefill is now a lead; decode is the remaining gap, and the README says exactly why.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOCKWORK -->
+<section class="project c" id="clockwork">
+  <div class="wrap">
+    <div class="phead">
+      <div>
+        <span class="tag">Story engine</span>
+        <h2>The Clockwork Dark</h2>
+        <p class="tagline">The engine resolves. The model narrates.</p>
+        <p>An emergent-story engine for local AI. A deterministic engine holds the truth: time, dice, money, law, what the city's schemers did last night. Local LLM agents only narrate it. Seeded systems run into each other, the engine settles the result, and a model on your own machine writes the prose.</p>
+        <p>Seven stories ship: grounded low fantasy, a fae-court bargain, cyberpunk survival, rain-and-radiator noir, a thief's comedy and a dating story played on a phone. The engine itself doesn't know any of them exist.</p>
+        <div class="links">
+          <a class="btn primary" href="https://github.com/nihilistau/clockwork-dark"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>nihilistau/clockwork-dark</a>
+        </div>
+      </div>
+      <ul class="feat">
+        <li><b>Illegal actions can't be sampled.</b> The output grammar is a JSON Schema rebuilt every turn from what the engine will accept. An unreachable destination simply isn't in the enum.</li>
+        <li><b>Choices carry intents.</b> Anything that moves, spends or risks something runs through the engine <i>before</i> the next word is written, and the model narrates the receipt.</li>
+        <li><b>Seeds replay.</b> Each system draws from its own named RNG stream. Same seed and same choices give the same world.</li>
+        <li><b>Every mechanic reaches the prose.</b> An evaluator rejects success narrated over a failed check, and a refused move gets an engine-written refusal rather than silence.</li>
+        <li><b>Local-first.</b> LM Studio by default, or llama-server, Ollama, vLLM. Shipped art packs mean every scene has a picture with no image model at all.</li>
+      </ul>
+    </div>
+
+    <div class="gallery">
+      <figure><img src="assets/img/clockwork-clockwork-dark-play.webp" alt="The Clockwork Dark in play" loading="lazy"><figcaption>In play: the scene plate, the narration, choices that carry engine intents, and the character sheet.</figcaption></figure>
+      <figure><img src="assets/img/clockwork-clockwork-dark-map.webp" alt="The Clockwork Dark travel map" loading="lazy"><figcaption>The travel graph of the flagship story.</figcaption></figure>
+      <figure><img src="assets/img/clockwork-hue-and-cry-play.webp" alt="HUE &amp; CRY in play" loading="lazy"><figcaption>HUE &amp; CRY, a thief's comedy in a candle-port.</figcaption></figure>
+      <figure><img src="assets/img/clockwork-neon-city-title.webp" alt="NEON CITY title screen" loading="lazy"><figcaption>NEON CITY: THE CROSSING, 21 days across the Sprawl.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- PRIMER -->
+<section class="project p" id="primer">
+  <div class="wrap">
+    <div class="phead">
+      <div>
+        <span class="tag">Offline reader</span>
+        <h2>Primer</h2>
+        <p class="tagline">A book that writes itself as you read it.</p>
+        <p>Start from a loose interest, like castles. Every phrase on the page can be clicked, and each one branches into a new page. Any phrase can be drawn as a picture or turned into a short clip, and you keep reading while they render. Pages can be grounded in an offline copy of Wikipedia, with citations you can follow.</p>
+        <p>Everything you read and every picture it draws is kept, so your wandering becomes a book you can browse again later.</p>
+        <div class="links">
+          <a class="btn primary" href="https://github.com/nihilistau/Primer"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.22 1.88.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>nihilistau/Primer</a>
+        </div>
+      </div>
+      <ul class="feat">
+        <li><b>Three ways out of every phrase.</b> <i>In this context</i>, <i>General</i>, or <i>Sideways</i>, a related idea you might not have thought to ask about.</li>
+        <li><b>It thinks ahead.</b> While you read, it quietly writes the page you're most likely to open next, so the click is instant.</li>
+        <li><b>Pictures and video on demand.</b> stable-diffusion.cpp in the background: SDXL, Qwen-Image, MOSS-Image, and Wan 2.2 or LTX for clips. Every image records its seed.</li>
+        <li><b>Grounded when you want it.</b> Offline Wikipedia via Kiwix, or the live web, with numbered citations and a badge saying what the page was written from.</li>
+        <li><b>It asks back.</b> <i>Test me</i> quizzes you on a page, <i>Review</i> brings questions back over the following days, and places get pinned on an offline map.</li>
+      </ul>
+    </div>
+
+    <div class="gallery">
+      <figure><img src="assets/img/primer-branch-fork.webp" alt="Primer branch cards fanning out from a clicked phrase" loading="lazy"><figcaption>Click a phrase and three branches fan out, with Image, Video and Ask about it.</figcaption></figure>
+      <figure><img src="assets/img/primer-video-animate.webp" alt="A Primer video window animating a trebuchet" loading="lazy"><figcaption>Any picture can be animated into a clip.</figcaption></figure>
+      <figure><img src="assets/img/primer-grounded-sources.webp" alt="A Primer page grounded in offline Wikipedia with citations" loading="lazy"><figcaption>Grounded in offline Wikipedia, with numbered citations.</figcaption></figure>
+      <figure><img src="assets/img/primer-map-lens.webp" alt="Primer offline map" loading="lazy"><figcaption>Places a page names, pinned on an offline map.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">About</span>
+      <h2>Who's behind this</h2>
+      <p>I'm Ray Daniels, in Victoria, Australia. I've been online almost every day since the BBS days, before the internet reached Australia, and I've been building PCs since the early '90s.</p>
+      <p>These projects are built almost entirely by AI agents, hands-off, and everything is pushed public, with markdown continuity notes in each repo so people and agents can follow along. Taken together they're also a record of how agentic coding has changed from one model generation to the next.</p>
+      <p>Everything here runs locally, on hardware you own. If something interests you, open an issue, fork it, or get in touch.</p>
+    </div>
+    <div class="contact" id="contact">
+      <h3>Get in touch</h3>
+      <a class="line" href="mailto:raydaniels@kairosai.xyz">Email <span>raydaniels@kairosai.xyz</span></a>
+      <a class="line" href="https://github.com/nihilistau">GitHub <span>github.com/nihilistau</span></a>
+      <a class="line" href="https://github.com/nihilistau/Kairos/issues">Kairos issues <span>bugs &amp; ideas</span></a>
+      <a class="line" href="https://github.com/nihilistau/clockwork-dark/issues">Clockwork Dark issues <span>bugs &amp; ideas</span></a>
+      <a class="line" href="https://github.com/nihilistau/Primer/issues">Primer issues <span>bugs &amp; ideas</span></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Kairos AI · kairosai.xyz</span>
+    <span>All projects MIT licensed · screenshots from each repo</span>
+  </div>
+</footer>
+
+<div id="lb" role="dialog" aria-label="Screenshot"><img alt=""><p></p></div>
+<script>
+  const lb=document.getElementById('lb'), lbImg=lb.querySelector('img'), lbCap=lb.querySelector('p');
+  document.querySelectorAll('.gallery img').forEach(img=>{
+    img.addEventListener('click',()=>{
+      lbImg.src=img.src; lbImg.alt=img.alt;
+      const cap=img.closest('figure').querySelector('figcaption');
+      lbCap.textContent=cap?cap.textContent:'';
+      lb.classList.add('on');
+    });
+  });
+  lb.addEventListener('click',()=>lb.classList.remove('on'));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
+</script>
+</body>
+</html>
