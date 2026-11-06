@@ -211,11 +211,11 @@
       </div>
       <div>
         <table>
-          <tr><th>RTX 2060 12 GB, Gemma-4-26B-A4B Q4</th><th>kairos-engine</th><th>llama.cpp -ncmoe 8</th></tr>
-          <tr><td>prefill, 3,720 tokens</td><td class="win">304.2 tok/s</td><td>262.6 tok/s</td></tr>
-          <tr><td>decode at depth 3,720</td><td>16.2 tok/s</td><td class="win">38.3 tok/s</td></tr>
+          <tr><th>RTX 2060 12 GB, Gemma-4-26B-A4B</th><th>kairos-engine</th><th>llama.cpp -ncmoe 14</th></tr>
+          <tr><td>prefill, 4,204 tokens</td><td class="win">5.95 s (~707 tok/s)</td><td>~340 tok/s</td></tr>
+          <tr><td>decode at ~4.2k</td><td class="win">35.5 tok/s</td><td>34.4 tok/s</td></tr>
         </table>
-        <p class="note">Same card, same weights, one sitting. Prefill is now a lead; decode is the remaining gap, and the README says exactly why.</p>
+        <p class="note">October 2026, same card, fresh daemon per run. Decode is at parity and prefill is about 2.1× ahead. In one round of work, decode went 27.3 → 35.5 tok/s and prefill 16.4 s → 5.95 s; the companion's ~9k persona snapshot capture went 55 s → 15 s.</p>
       </div>
     </div>
   </div>
